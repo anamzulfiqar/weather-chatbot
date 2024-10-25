@@ -2,3 +2,6 @@ streamlit
 requests
 transformers
 Pillow
+tensorflow  # If using TensorFlow
+torch  # If using PyTorch
+
