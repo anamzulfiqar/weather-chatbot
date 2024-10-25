@@ -16,10 +16,9 @@ chatbot = pipeline("text-generation", model="microsoft/DialoGPT-small")
 
 # Function to get weather data
 def get_weather_data(city, forecast=False):
-    # URL for current weather
     current_weather_url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
     
-    if not forecast:  # Fetch current weather
+    if not forecast:
         current_response = requests.get(current_weather_url)
         if current_response.status_code == 200:
             current_data = current_response.json()
@@ -31,16 +30,13 @@ def get_weather_data(city, forecast=False):
         else:
             return "Error fetching current weather.", None
 
-    # URL for 5-day forecast
     forecast_url = f"http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api_key}&units=metric"
-    
-    # Fetch 5-day forecast
     forecast_response = requests.get(forecast_url)
+    
     if forecast_response.status_code == 200:
         forecast_data = forecast_response.json()
         daily_forecast = defaultdict(list)
 
-        # Process forecast data
         for forecast in forecast_data["list"]:
             date = datetime.utcfromtimestamp(forecast["dt"]).strftime("%Y-%m-%d")
             daily_forecast[date].append(forecast)
@@ -59,48 +55,54 @@ def get_weather_data(city, forecast=False):
 
 # Streamlit application
 def main():
-    st.title("Weather Chatbot")
-    st.write("Welcome to the Weather Chatbot! You can ask about the weather by saying something like 'What's the weather in London?' or 'Give me a 5-day forecast for London.'")
+    st.set_page_config(page_title="Weather Chatbot", page_icon="☀️", layout="wide")
+    st.title("🌦️ Weather Chatbot 🌦️")
+    
+    st.markdown("""
+        <style>
+        .main {
+            background-color: #f0f8ff;  /* Light blue background */
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-    user_input = st.text_input("You:", "").strip().lower()
+    user_input = st.text_input("You:", "", key="user_input").strip().lower()
+
+    # Column layout for input and output
+    col1, col2 = st.columns([1, 3])
 
     if user_input:
-        # Handle weather queries
-        if "weather" in user_input or "current" in user_input:
+        with col1:
+            st.header("City Name")
             if "in" in user_input:
                 city = user_input.split("in")[-1].strip()
             else:
-                city = st.text_input("Please specify the city name for the weather report:").strip()
-
+                city = st.text_input("Specify city name:", "").strip()
             normalized_city = city.capitalize()
 
+        with col2:
             if normalized_city in cities:
                 weather_report, icon = get_weather_data(normalized_city)
-                st.write("Bot:", weather_report)
+                st.write("**Bot:**", weather_report)
                 if icon:
-                    st.image(f"http://openweathermap.org/img/wn/{icon}.png")  # Show weather icon
+                    st.image(f"http://openweathermap.org/img/wn/{icon}.png", width=100)  # Show weather icon
             else:
-                st.write("Bot: Sorry, I don't have data for that city.")
+                st.write("**Bot:** Sorry, I don't have data for that city.")
 
         # Handle 5-day forecast requests
-        elif "5-day forecast" in user_input or "forecast" in user_input:
-            if "in" in user_input:
-                city = user_input.split("in")[-1].strip()
-            else:
-                city = st.text_input("Please specify the city name for the 5-day forecast:").strip()
-
-            normalized_city = city.capitalize()
-
+        if "5-day forecast" in user_input or "forecast" in user_input:
             if normalized_city in cities:
                 forecast_report = get_weather_data(normalized_city, forecast=True)
-                st.write("Bot:", forecast_report)
-            else:
-                st.write("Bot: Sorry, I don't have data for that city.")
+                st.write("**Bot:**", forecast_report)
 
         # Use chatbot model for general conversation
         else:
             response = chatbot(user_input, max_length=50, num_return_sequences=1)[0]['generated_text']
-            st.write("Bot:", response)
+            st.write("**Bot:**", response)
+
+    # Footer
+    st.markdown("---")
+    st.write("👋 Ask me about the weather or just chat with me!")
 
 if __name__ == "__main__":
     main()
