@@ -12,7 +12,8 @@ api_key = "248cad0b7fd5b82593d13416788f774f"
 cities = ["London", "New York", "Sheffield", "Pakistan", "Norway", "Oslo", "Karachi", "Islamabad"]
 
 # Initialize the Hugging Face text generation model
-chatbot = pipeline("text-generation", model="microsoft/DialoGPT-small")
+chatbot = pipeline("text-generation", model="microsoft/DialoGPT-small", truncation=True)
+
 
 # Function to get weather data
 def get_weather_data(city, forecast=False):
