@@ -4,6 +4,8 @@ transformers
 Pillow
 tensorflow
 tf-keras
+streamlit==<latest_version>
+
 
 
 
