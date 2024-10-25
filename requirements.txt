@@ -3,7 +3,7 @@ requests
 transformers
 Pillow
 torch  
-tf-keras  
+
 
 
 
