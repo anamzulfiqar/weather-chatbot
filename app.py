@@ -51,7 +51,7 @@ def get_weather_data(city, forecast=False):
             descriptions = [f["weather"][0]["description"] for f in forecasts]
             avg_temp = sum(temps) / len(temps)
             main_description = max(set(descriptions), key=descriptions.count)
-            forecast_report += f"Date: {date}, Avg Temp: {avg_temp:.1f}°C, Weather: {main_description}\n"
+            forecast_report += f"**Date:** {date}, **Avg Temp:** {avg_temp:.1f}°C, **Weather:** {main_description}\n"
     else:
         forecast_report = "Error fetching forecast."
     
@@ -59,11 +59,16 @@ def get_weather_data(city, forecast=False):
 
 # Streamlit application
 def main():
-    st.title("Weather Chatbot")
+    # Set page configuration
+    st.set_page_config(page_title="Weather Chatbot", page_icon="🌤️", layout="wide")
+    
+    st.title("🌤️ Weather Chatbot")
     st.write("Welcome to the Weather Chatbot! You can ask about the weather by saying something like 'What's the weather in London?' or 'Give me a 5-day forecast for London.'")
 
+    # User input
     user_input = st.text_input("You:", "").strip().lower()
 
+    # Handle user input
     if user_input:
         # Handle weather queries
         if "weather" in user_input or "current" in user_input:
@@ -76,11 +81,11 @@ def main():
 
             if normalized_city in cities:
                 weather_report, icon = get_weather_data(normalized_city)
-                st.write("Bot:", weather_report)
+                st.write("**Bot:**", weather_report)
                 if icon:
-                    st.image(f"http://openweathermap.org/img/wn/{icon}.png")  # Show weather icon
+                    st.image(f"http://openweathermap.org/img/wn/{icon}.png", use_column_width=True)  # Show weather icon
             else:
-                st.write("Bot: Sorry, I don't have data for that city.")
+                st.write("**Bot:** Sorry, I don't have data for that city.")
 
         # Handle 5-day forecast requests
         elif "5-day forecast" in user_input or "forecast" in user_input:
@@ -93,14 +98,14 @@ def main():
 
             if normalized_city in cities:
                 forecast_report = get_weather_data(normalized_city, forecast=True)
-                st.write("Bot:", forecast_report)
+                st.write("**Bot:**", forecast_report)
             else:
-                st.write("Bot: Sorry, I don't have data for that city.")
+                st.write("**Bot:** Sorry, I don't have data for that city.")
 
         # Use chatbot model for general conversation
         else:
-            response = chatbot(user_input, max_length=50, num_return_sequences=1)[0]['generated_text']
-            st.write("Bot:", response)
+            response = chatbot(user_input, max_length=50, num_return_sequences=1, truncation=True)[0]['generated_text']
+            st.write("**Bot:**", response)
 
 if __name__ == "__main__":
-    main()  
+    main()
