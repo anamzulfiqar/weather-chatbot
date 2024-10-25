@@ -1,9 +1,9 @@
-streamlit==1.24.0  # Update to the latest version or use a known stable version
-requests==2.31.0
-transformers==4.28.1  # Make sure to match the version with your environment
-Pillow==9.5.0
-torch==2.0.1  # Update based on compatibility with your environment
-tf-keras  # Ensure compatibility with Keras
+streamlit
+requests
+transformers
+Pillow
+torch  
+tf-keras  
 
 
 
