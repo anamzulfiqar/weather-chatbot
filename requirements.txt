@@ -3,7 +3,8 @@ requests
 transformers
 Pillow
 torch  
-
+pandas
+numpy
 
 
 
